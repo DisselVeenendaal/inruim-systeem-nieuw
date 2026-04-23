@@ -213,7 +213,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
 <!-- SCAN -->
 <div class="page" id="p-scan">
   <div class="topbar">
-    <div class="tb-l"><div class="tb-logo" style="background:white;padding:2px;overflow:hidden;border-radius:9px"><svg viewBox="0 0 200 200" width="30" height="30" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="100" fill="white"/><path d="M100,10 C60,10 28,38 18,76 C12,100 18,124 34,140 C50,156 72,162 90,156 C74,148 62,132 64,112 C66,94 80,80 98,80 C112,80 124,90 124,104 C124,118 112,128 98,126 C86,124 78,112 82,100 C85,90 96,86 106,90 C114,93 118,103 114,111 C111,117 104,120 98,118 L100,190 C140,190 172,162 182,124 C192,86 172,40 138,20 C126,13 113,10 100,10Z" fill="#1565C0"/><path d="M100,190 L98,118 C92,116 86,110 86,104 C86,96 94,88 104,90 C112,92 116,102 112,110 C109,117 102,121 96,119 C104,122 114,118 118,108 C124,94 116,78 104,70 C96,64 86,62 78,66 C88,78 92,94 88,110 C84,126 72,138 58,140 C68,156 84,168 100,190Z" fill="#D32F2F"/></svg></div><div class="tb-brand">Dissel <span>BV</span></div></div>
+    <div class="tb-l"><div class="tb-logo" style="background:white;padding:2px;overflow:hidden;border-radius:9px"><img src="./logo.png" width="30" height="30" style="display:block;object-fit:contain" onerror="this.style.display='none';this.parentElement.textContent='🔥'"></div><div class="tb-brand">Dissel <span>BV</span></div></div>
     <div class="tb-r"><div class="avatar" id="av-scan"></div><button class="btn-out" onclick="logout()">Uitloggen</button></div>
   </div>
   <div class="scan-body">
@@ -391,9 +391,15 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
 </div>
 
 <script>
+// ── POWER AUTOMATE FLOWS (zelfde als huidig systeem) ──
+var ZOEK_FLOW_URL = 'https://default44fd0f2e682f48b1b0a49033071749.17.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/e14c5810353b4698b27eadd3ae06a205/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=OISxysFIXa5S2wP_k7eE-s5oHLlZM73-fwL8keg9eEM';
+var MAIL_FLOW_URL = 'https://default44fd0f2e682f48b1b0a49033071749.17.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/08828dcb579c4ac88b91585f799d8e5d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=8x_PZd6NKyFjFdH7NT-SRGpYep9_sTDOXz64f1mx4JY';
+var HISTORIE_OPSLAAN_URL = 'https://default44fd0f2e682f48b1b0a49033071749.17.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/c7cfe9c7ff3041228e047893b0bd43e8/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=x3Yz5Zn75ItTbJWw6ZwLquE7PHCj5wIuUDF1C0jsiXk';
+var HISTORIE_OPHALEN_URL = 'https://default44fd0f2e682f48b1b0a49033071749.17.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/6b4f303722fb4b159d68634a2193f697/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=wb3j9w0Ghs2_aoOX4pRce5Ohw6X0Zpuyws9XGstRkx4';
+
 // ── DATA ──
-var USERS = ["Henri","Jeroen","Cees","Wim","Willem","Wouter","Arjen","Jan-Jaap"];
-var MAGS  = ["— kies —","Magazijn 1","Magazijn 2","Magazijn 3","Buitenopslag"];
+var USERS = ["Henri","Jeroen","Cees","Wim","Willem","Wouter","Arjen","Naud"];
+var MAGS  = ["— kies —","Magazijn 1","Magazijn 2","Magazijn 3","Magazijn 4","Magazijn 5"];
 var DEMO  = {
   "136078":{lev:"Laufen Benelux BV",datum:"23-4-2026",verk:"332701",klant:"Hotel Mennorode",arts:[
     {nr:"2420.00000",lev:"",desc:"Laufen INEO Air Bedieningspaneel",rm:"",exp:158},
