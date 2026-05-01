@@ -480,21 +480,56 @@ function forceOpen(){ closeModal(); openDoc(pending); document.getElementById("i
 
 // ── OPEN DOC ──
 function openDoc(num){
-  var d = DEMO[num] || {lev:"Onbekend",datum:"23-4-2026",verk:"—",klant:"—",arts:[{nr:num+".001",lev:"",desc:"Artikel "+num,rm:"",exp:10}]};
-  arts = d.arts.map(function(a,i){ return {nr:a.nr,lev:a.lev,desc:a.desc,rm:a.rm,exp:a.exp,gel:"",mag:"— kies —",loc:"",splits:[],id:i}; });
-  photos=0; sortCol=null; sortDir=1;
-  document.getElementById("d-num").textContent   = num;
-  document.getElementById("d-lev").textContent   = d.lev;
-  document.getElementById("d-datum").textContent = d.datum;
-  document.getElementById("d-verk").textContent  = d.verk;
-  document.getElementById("d-klant").textContent = d.klant;
-  document.getElementById("remark").value = "";
-  document.getElementById("srch").value = "";
-  document.getElementById("warn-box").style.display="none";
-  document.getElementById("si-nr").textContent="⇅"; document.getElementById("hdr-nr").classList.remove("active");
-  document.getElementById("si-lev").textContent="⇅"; document.getElementById("hdr-lev").classList.remove("active");
-  resetPhotos(); renderArts(); updateStats();
-  show("p-doc");
+  var err = document.getElementById("scan-err");
+  var btn = document.querySelector("#p-scan .btn-primary");
+  btn.textContent = "⏳ Zoeken...";
+  btn.disabled = true;
+
+  fetch(ZOEK_FLOW_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ inkoopnummer: num })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    btn.textContent = "Zoeken \u2192";
+    btn.disabled = false;
+    if(!data || data.length === 0){
+      err.textContent = "\u26a0 Inkoopnummer niet gevonden. Controleer het nummer op de pakbon.";
+      err.style.display = "block";
+      return;
+    }
+    var eersteRij = data[0];
+    arts = data.map(function(r, i){
+      return {
+        nr:   r["Artnr"]        || r["artnr"]        || "",
+        lev:  r["Artikelcode"]  || r["artikelcode"]  || "",
+        desc: r["Omschrijving"] || r["omschrijving"] || "",
+        rm:   r["Opmerking"]    || r["opmerking"]    || "",
+        exp:  Number(r["Verwacht"] || r["verwacht"]  || 0),
+        gel: "", mag: "— kies —", loc: "", splits: [], id: i
+      };
+    });
+    photos=0; sortCol=null; sortDir=1;
+    document.getElementById("d-num").textContent   = num;
+    document.getElementById("d-lev").textContent   = eersteRij["Leverancier"]    || eersteRij["leverancier"]    || "\u2014";
+    document.getElementById("d-datum").textContent = eersteRij["Datum"]          || eersteRij["datum"]          || "\u2014";
+    document.getElementById("d-verk").textContent  = eersteRij["Verkoopnummer"]  || eersteRij["verkoopnummer"]  || "\u2014";
+    document.getElementById("d-klant").textContent = eersteRij["Klantreferentie"]|| eersteRij["klantreferentie"]|| "\u2014";
+    document.getElementById("remark").value = "";
+    document.getElementById("srch").value = "";
+    document.getElementById("warn-box").style.display="none";
+    document.getElementById("si-nr").textContent="\u21c5"; document.getElementById("hdr-nr").classList.remove("active");
+    document.getElementById("si-lev").textContent="\u21c5"; document.getElementById("hdr-lev").classList.remove("active");
+    resetPhotos(); renderArts(); updateStats();
+    show("p-doc");
+  })
+  .catch(function(){
+    btn.textContent = "Zoeken \u2192";
+    btn.disabled = false;
+    err.textContent = "\u26a0 Verbindingsfout. Controleer de internetverbinding en probeer opnieuw.";
+    err.style.display = "block";
+  });
 }
 
 // ── SORT ──
