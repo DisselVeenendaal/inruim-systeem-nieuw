@@ -239,8 +239,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
       <button class="btn-out" onclick="logout()">Uitloggen</button>
     </div>
   </div>
-  <div class="doc-layout">
-    <div class="doc-main">
+  <div style="padding:20px;max-width:1200px;margin:0 auto">
       <div class="doc-hdr">
         <div class="doc-num-lbl">Inkoopnummer</div>
         <div class="doc-num" id="d-num">—</div>
@@ -255,10 +254,44 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
           <div class="dm"><div class="dm-l">Klant</div><div class="dm-v" id="d-klant">—</div></div>
         </div>
       </div>
-      <div class="prog-card">
-        <div class="prog-top"><div style="font-size:13px;font-weight:700">Voortgang verwerking</div><div class="prog-pct" id="prog-pct">0%</div></div>
-        <div class="prog-track"><div class="prog-bar" id="prog-bar"></div></div>
-        <div class="prog-stats"><span><b id="ps-fil">0</b> van <b id="ps-tot">0</b> ingevuld</span><span>Besteld: <b id="ps-exp">0</b> · Geleverd: <b id="ps-del">0</b></span></div>
+      <!-- ACTIEBALK -->
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:16px 20px;margin-bottom:14px;display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap">
+        <div style="flex:0 0 auto">
+          <div class="side-title" style="margin-bottom:10px">Foto's pakbon</div>
+          <div style="display:flex;gap:8px;margin-bottom:8px">
+            <button class="pbtn" onclick="addPhoto()">📸 Camera</button>
+            <button class="pbtn" onclick="addPhoto()">🖼️ Uploaden</button>
+          </div>
+          <div class="photo-grid" id="photo-grid">
+            <div class="photo-thumb" onclick="addPhoto()"><span style="font-size:22px">📄</span><span>Foto 1</span></div>
+            <div class="photo-thumb" onclick="addPhoto()"><span style="font-size:22px">📄</span><span>Foto 2</span></div>
+          </div>
+          <div class="photo-req" id="photo-req">⚠ Minimaal 2 foto's vereist</div>
+        </div>
+        <div style="width:1px;align-self:stretch;background:var(--border);flex-shrink:0"></div>
+        <div style="flex:1;min-width:220px">
+          <div class="side-title" style="margin-bottom:10px">Snelle invoer</div>
+          <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+            <div style="flex:1;min-width:140px">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:6px">Magazijn (alle regels)</div>
+              <select class="mag-sel" id="bulk-mag" style="width:100%"><option>— kies —</option></select>
+            </div>
+            <div style="flex:1;min-width:120px">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:6px">Locatie (alle regels)</div>
+              <input class="loc-inp" id="bulk-loc" type="text" placeholder="Bijv. A-01-03" style="width:100%">
+            </div>
+            <div>
+              <button onclick="allesCompleet()" style="background:linear-gradient(135deg,#0050d4,#003DA5);border:none;border-radius:10px;padding:10px 16px;font-size:13px;font-weight:800;color:#fff;cursor:pointer;font-family:inherit;white-space:nowrap" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">⚡ Alles compleet</button>
+              <div id="bulk-feedback" style="display:none;font-size:11px;font-weight:600;color:var(--green);text-align:center;margin-top:4px">✓ Ingevuld!</div>
+            </div>
+          </div>
+        </div>
+        <div style="width:1px;align-self:stretch;background:var(--border);flex-shrink:0"></div>
+        <div style="flex:0 0 auto;min-width:180px;display:flex;flex-direction:column;gap:8px">
+          <div class="side-title" style="margin-bottom:4px">Opmerking</div>
+          <textarea class="remark-ta" id="remark" placeholder="Optionele opmerking..." style="min-height:60px;resize:none;flex:1"></textarea>
+          <button class="btn-green" onclick="tryBevestig()">✅ Bevestigen & Versturen</button>
+        </div>
       </div>
       <div class="srch-row">
         <input class="srch-inp" id="srch" placeholder="🔍  Zoek op Art.nr of Art.lev..." oninput="renderArts()">
@@ -290,44 +323,6 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
         <div class="warn-box-title">⚠ Let op — verplichte velden ontbreken</div>
         <div class="warn-box-list" id="warn-list"></div>
       </div>
-    </div>
-    <div class="doc-side">
-      <div class="side-section">
-        <div class="side-title">Foto's pakbon</div>
-        <div class="photo-btns">
-          <button class="pbtn" onclick="addPhoto()">📸 Camera</button>
-          <button class="pbtn" onclick="addPhoto()">🖼️ Uploaden</button>
-        </div>
-        <div class="photo-grid" id="photo-grid">
-          <div class="photo-thumb" onclick="addPhoto()"><span style="font-size:22px">📄</span><span>Foto 1</span></div>
-          <div class="photo-thumb" onclick="addPhoto()"><span style="font-size:22px">📄</span><span>Foto 2</span></div>
-        </div>
-        <div class="photo-req" id="photo-req">⚠ Minimaal 2 foto's vereist</div>
-      </div>
-      <div class="side-section">
-        <div class="side-title">Opmerking</div>
-        <textarea class="remark-ta" id="remark" placeholder="Optionele opmerking..."></textarea>
-      </div>
-      <div class="side-section">
-        <div class="side-title">Snelle invoer</div>
-        <div style="margin-bottom:8px">
-          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:6px">Magazijn (alle regels)</div>
-          <select class="mag-sel" id="bulk-mag" style="width:100%">
-            <option>— kies —</option>
-          </select>
-        </div>
-        <div style="margin-bottom:12px">
-          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:6px">Locatie (alle regels)</div>
-          <input class="loc-inp" id="bulk-loc" type="text" placeholder="Bijv. A-01-03" style="width:100%">
-        </div>
-        <button onclick="allesCompleet()" style="width:100%;background:linear-gradient(135deg,#0050d4,#003DA5);border:none;border-radius:12px;padding:14px;font-size:14px;font-weight:800;color:#fff;cursor:pointer;font-family:inherit;margin-bottom:8px;transition:all .2s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">⚡ Alles compleet ontvangen</button>
-        <div id="bulk-feedback" style="display:none;font-size:12px;font-weight:600;color:var(--green);text-align:center;margin-top:4px">✓ Alle regels ingevuld!</div>
-      </div>
-      <div class="side-section">
-        <div class="side-title">Verzenden</div>
-        <button class="btn-green" onclick="tryBevestig()">✅ Bevestigen & Versturen</button>
-      </div>
-    </div>
   </div>
 </div>
 
