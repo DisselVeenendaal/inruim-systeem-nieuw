@@ -726,9 +726,41 @@ function goHist(){
       el.innerHTML = entries.map(function(h){
         var lev = h.Leverancier || h.leverancier || "—";
         var datum = h.Datum || h.datum || "—";
-        var tijd = h.Tijd || h.tijd || "";
+        var tijdRaw = h.Tijd || h.tijd || "";
+        var tijd = "";
+        if(tijdRaw !== ""){
+          var t = parseFloat(tijdRaw);
+          if(!isNaN(t) && t >= 0 && t < 1){
+            var totalMin = Math.round(t * 24 * 60);
+            var uren = Math.floor(totalMin / 60);
+            var min = totalMin % 60;
+            tijd = (uren<10?"0":"")+uren+":"+(min<10?"0":"")+min;
+          } else { tijd = String(tijdRaw); }
+        }
         var user = h.Medewerker || h.medewerker || "—";
-        return '<div class="hist-item"><div class="hi-dot"></div><div><div class="hi-num">'+esc(String(h.Inkoopnummer||h.inkoopnummer||num))+'</div><div class="hi-meta">'+esc(lev)+' · '+esc(datum)+(tijd?' '+esc(tijd):'')+' · door '+esc(user)+'</div></div><div style="margin-left:auto"><span style="background:rgba(0,193,124,0.2);color:var(--green);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700">✓ Verwerkt</span></div></div>';
+        var regelsRaw = h.Regels || h.regels || "";
+        var regels = [];
+        try { regels = typeof regelsRaw === "string" ? JSON.parse(regelsRaw) : regelsRaw; } catch(e){}
+        var regelsHtml = "";
+        if(regels && regels.length){
+          regelsHtml = '<div style="margin-top:12px;border-top:1px solid rgba(255,255,255,.08);padding-top:12px">'+
+            '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:8px">Artikelen</div>'+
+            '<table style="width:100%;border-collapse:collapse;font-size:12px">'+
+            '<tr style="color:var(--muted)"><th style="text-align:left;padding:4px 6px">Art.nr</th><th style="text-align:left;padding:4px 6px">Omschrijving</th><th style="text-align:center;padding:4px 6px">Verwacht</th><th style="text-align:center;padding:4px 6px">Geleverd</th><th style="text-align:left;padding:4px 6px">Magazijn</th><th style="text-align:left;padding:4px 6px">Locatie</th></tr>'+
+            regels.map(function(r){
+              var afw = String(r.verwacht) !== String(r.geleverd);
+              return '<tr style="border-top:1px solid rgba(255,255,255,.05)">'+
+                '<td style="padding:6px;font-family:monospace;font-size:11px">'+esc((r.artnr||"").trim())+'</td>'+
+                '<td style="padding:6px">'+esc((r.omschrijving||"").trim())+'</td>'+
+                '<td style="padding:6px;text-align:center">'+esc(String(r.verwacht||0))+'</td>'+
+                '<td style="padding:6px;text-align:center;font-weight:700;color:'+(afw?'var(--orange)':'var(--green)')+'">'+esc(String(r.geleverd||0))+'</td>'+
+                '<td style="padding:6px">'+esc(String(r.magazijn||"—"))+'</td>'+
+                '<td style="padding:6px;font-family:monospace">'+esc(String(r.locatie||"—"))+'</td>'+
+              '</tr>';
+            }).join("")+
+            '</table></div>';
+        }
+        return '<div class="hist-item" style="flex-direction:column;align-items:flex-start"><div style="display:flex;align-items:center;gap:14px;width:100%"><div class="hi-dot"></div><div><div class="hi-num">'+esc(String(h.Inkoopnummer||h.inkoopnummer||num))+'</div><div class="hi-meta">'+esc(lev)+' · '+esc(datum)+(tijd?' · '+esc(tijd):'')+' · door '+esc(user)+'</div></div><div style="margin-left:auto"><span style="background:rgba(0,193,124,0.2);color:var(--green);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700">✓ Verwerkt</span></div></div>'+regelsHtml+'</div>';
       }).join("");
     }
   })
