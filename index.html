@@ -513,7 +513,7 @@ function openDoc(num){
     photos=0; sortCol=null; sortDir=1;
     document.getElementById("d-num").textContent   = num;
     document.getElementById("d-lev").textContent   = eersteRij["Leverancier"]    || eersteRij["leverancier"]    || "\u2014";
-    document.getElementById("d-datum").textContent = eersteRij["Datum"]          || eersteRij["datum"]          || "\u2014";
+    document.getElementById("d-datum").textContent = new Date().toLocaleDateString("nl-NL",{day:"2-digit",month:"numeric",year:"numeric"});
     document.getElementById("d-verk").textContent  = eersteRij["Verkoopnummer"]  || eersteRij["verkoopnummer"]  || "\u2014";
     document.getElementById("d-klant").textContent = eersteRij["Klantreferentie"]|| eersteRij["klantreferentie"]|| "\u2014";
     document.getElementById("remark").value = "";
