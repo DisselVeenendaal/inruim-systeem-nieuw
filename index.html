@@ -703,18 +703,38 @@ function bevestig(){
 // ── HISTORIE ──
 function goHist(){
   var num = document.getElementById("d-num").textContent;
-  var entries = hist.filter(function(h){ return h.num===num; });
   var el = document.getElementById("hist-list");
   document.getElementById("hist-title").textContent = "📋 Historie – "+num;
   document.getElementById("av-hist").textContent = ini(currentUser);
-  if(entries.length===0){
-    el.innerHTML='<div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:24px;text-align:center;color:var(--muted);font-size:14px"><div style="font-size:32px;margin-bottom:10px">📋</div>Geen eerdere verwerkingen gevonden voor <b style="color:#fff">'+num+'</b>.</div>';
-  } else {
-    el.innerHTML = entries.map(function(h){
-      return '<div class="hist-item"><div class="hi-dot"></div><div><div class="hi-num">'+h.num+'</div><div class="hi-meta">'+h.lev+' · '+h.datum+' · door '+h.user+'</div></div><div style="margin-left:auto"><span style="background:rgba(0,193,124,0.2);color:var(--green);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700">✓ Verwerkt</span></div></div>';
-    }).join("");
-  }
+  el.innerHTML = '<div style="text-align:center;padding:24px;color:var(--muted)">⏳ Historie ophalen...</div>';
   show("p-hist");
+
+  fetch(HISTORIE_OPHALEN_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ inkoopnummer: num })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    var entries = Array.isArray(data) ? data : (data.value || []);
+    entries = entries.filter(function(h){
+      return String(h.Inkoopnummer) === String(num) || String(h.inkoopnummer) === String(num);
+    });
+    if(entries.length === 0){
+      el.innerHTML = '<div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:24px;text-align:center;color:var(--muted);font-size:14px"><div style="font-size:32px;margin-bottom:10px">📋</div>Geen eerdere verwerkingen gevonden voor <b style="color:#fff">'+num+'</b>.</div>';
+    } else {
+      el.innerHTML = entries.map(function(h){
+        var lev = h.Leverancier || h.leverancier || "—";
+        var datum = h.Datum || h.datum || "—";
+        var tijd = h.Tijd || h.tijd || "";
+        var user = h.Medewerker || h.medewerker || "—";
+        return '<div class="hist-item"><div class="hi-dot"></div><div><div class="hi-num">'+esc(String(h.Inkoopnummer||h.inkoopnummer||num))+'</div><div class="hi-meta">'+esc(lev)+' · '+esc(datum)+(tijd?' '+esc(tijd):'')+' · door '+esc(user)+'</div></div><div style="margin-left:auto"><span style="background:rgba(0,193,124,0.2);color:var(--green);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700">✓ Verwerkt</span></div></div>';
+      }).join("");
+    }
+  })
+  .catch(function(){
+    el.innerHTML = '<div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:24px;text-align:center;color:var(--muted);font-size:14px">⚠ Kon de historie niet ophalen.</div>';
+  });
 }
 
 // ── SPLIT ──
